@@ -127,11 +127,8 @@ final class LaserGame extends JFrame implements KeyListener
         {
             g.drawLine(mapa[0][0].getWidth()*i+0,mapa[0][0].getHeight()*j+mapa[0][0].getHeight()/2,mapa[0][0].getWidth()*i+ mapa[0][0].getWidth()/2,mapa[0][0].getHeight()*j+ 0);
         }
-        @Override
-        protected void paintChildren(Graphics g) {
-            super.paintChildren(g);
-            g.setColor(Color.red);
-            repaint();
+        public void drawLine(Graphics g)
+        {
             if(paint){
                 for(int i=0;i<m;i++){
                     for(int j=0;j<m;j++){
@@ -172,6 +169,14 @@ final class LaserGame extends JFrame implements KeyListener
                 }
             }
         }
+        @Override
+        protected void paintChildren(Graphics g) {
+            super.paintChildren(g);
+            g.setColor(Color.red);
+            repaint();
+            drawLine(g);
+            
+        }
             /*@Override
             public void paintComponent(Graphics g) {
                 //Graphics2D g2 = (Graphics2D)g;
@@ -193,17 +198,17 @@ final class LaserGame extends JFrame implements KeyListener
     }
             
     
-    public final void paintComponent(Graphics g) {
-                //super.paintComponent(g);
-                g.setColor(Color.RED);
-                for(ListIterator<PointOfReflect> it = listOfReflect.listIterator();it.hasNext();)
-                {
-                    PointOfReflect current = it.next();
-                    current.printPointOfReflect();
-                    g.drawLine(mapa[0][0].getWidth()*(current.currentLaserX+current.previousLaserX)/2, mapa[0][0].getHeight()*(current.currentLaserY+current.previousLaserY)/2,0,0);
-                    
-                }
-            }
+    /*public final void paintComponent(Graphics g) {
+        //super.paintComponent(g);
+        g.setColor(Color.RED);
+        for(ListIterator<PointOfReflect> it = listOfReflect.listIterator();it.hasNext();)
+        {
+            PointOfReflect current = it.next();
+            current.printPointOfReflect();
+            g.drawLine(mapa[0][0].getWidth()*(current.currentLaserX+current.previousLaserX)/2, mapa[0][0].getHeight()*(current.currentLaserY+current.previousLaserY)/2,0,0);
+
+        }
+    }*/
         
     
     
