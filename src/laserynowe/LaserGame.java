@@ -70,13 +70,13 @@ final class LaserGame extends JFrame implements KeyListener
         listOfReflect = new ArrayList<PointOfReflect>();
         for (int y = 0;y<n;y++){
             for (int x = 0;x<m;x++){
-                    mapa[x][y] = new JLabel();
-                    mapa[x][y].setBackground(Color.BLACK);
-                    //panel.add(mapa[x][y]);
-                    mapa[x][y].setEnabled(true);
-                    mapa[x][y].setOpaque(true);
-                    //mapa[x][y].setBorder(BorderFactory.createLineBorder(Color.BLACK));
-                    mapa[x][y].setPreferredSize(new Dimension(50,50));      
+                mapa[x][y] = new JLabel();
+                mapa[x][y].setBackground(Color.BLACK);
+                //panel.add(mapa[x][y]);
+                mapa[x][y].setEnabled(true);
+                mapa[x][y].setOpaque(true);
+                //mapa[x][y].setBorder(BorderFactory.createLineBorder(Color.BLACK));
+                mapa[x][y].setPreferredSize(new Dimension(50,50));      
             }
         }
         panel.setLayout(new GridLayout(n,m));
@@ -102,68 +102,67 @@ final class LaserGame extends JFrame implements KeyListener
         printLaserTable();
     }
     class JLines extends JPanel{
-            public JLines()
-            {
-               
-            }
-            public Graphics getGraph()
-            {
-                return this.getGraphics();
-            }
-            public void paintbottomright(Graphics g, int i, int j) // topleft
-            {
-                g.drawLine(mapa[0][0].getWidth()*i+mapa[0][0].getWidth()/2,mapa[0][0].getHeight()*j+mapa[0][0].getHeight(),mapa[0][0].getWidth()*i+mapa[0][0].getWidth(),mapa[0][0].getHeight()*j+ mapa[0][0].getHeight()/2); // dolny prawy
+        public JLines()
+        {
 
-            }
-            public void paintbottomleft(Graphics g, int i, int j)
-            {
-                g.drawLine(mapa[0][0].getWidth()*i+0,mapa[0][0].getHeight()*j+mapa[0][0].getHeight()/2, mapa[0][0].getWidth()*i+mapa[0][0].getWidth()/2,mapa[0][0].getHeight()*j+ mapa[0][0].getHeight()); // dolny lewy
-            }
-            public void painttopright(Graphics g, int i, int j)
-            {
-                g.drawLine(mapa[0][0].getWidth()*i+mapa[0][0].getWidth()/2,mapa[0][0].getHeight()*j+0,mapa[0][0].getWidth()*i+ mapa[0][0].getWidth(), mapa[0][0].getHeight()*j+mapa[0][0].getHeight()/2);
-            }
-            public void painttopleft(Graphics g, int i, int j)
-            {
-                g.drawLine(mapa[0][0].getWidth()*i+0,mapa[0][0].getHeight()*j+mapa[0][0].getHeight()/2,mapa[0][0].getWidth()*i+ mapa[0][0].getWidth()/2,mapa[0][0].getHeight()*j+ 0);
-            }
-            @Override
-            protected void paintChildren(Graphics g) {
-                super.paintChildren(g);
-                g.setColor(Color.red);
-                repaint();
-                if(paint){
-                    for(int i=0;i<m;i++){
-                        for(int j=0;j<m;j++){
-                            int value = laserTable[i][j];
-                            while(value>0)
+        }
+        public Graphics getGraph()
+        {
+            return this.getGraphics();
+        }
+        public void paintbottomright(Graphics g, int i, int j) // topleft
+        {
+            g.drawLine(mapa[0][0].getWidth()*i+mapa[0][0].getWidth()/2,mapa[0][0].getHeight()*j+mapa[0][0].getHeight(),mapa[0][0].getWidth()*i+mapa[0][0].getWidth(),mapa[0][0].getHeight()*j+ mapa[0][0].getHeight()/2); // dolny prawy
+
+        }
+        public void paintbottomleft(Graphics g, int i, int j)
+        {
+            g.drawLine(mapa[0][0].getWidth()*i+0,mapa[0][0].getHeight()*j+mapa[0][0].getHeight()/2, mapa[0][0].getWidth()*i+mapa[0][0].getWidth()/2,mapa[0][0].getHeight()*j+ mapa[0][0].getHeight()); // dolny lewy
+        }
+        public void painttopright(Graphics g, int i, int j)
+        {
+            g.drawLine(mapa[0][0].getWidth()*i+mapa[0][0].getWidth()/2,mapa[0][0].getHeight()*j+0,mapa[0][0].getWidth()*i+ mapa[0][0].getWidth(), mapa[0][0].getHeight()*j+mapa[0][0].getHeight()/2);
+        }
+        public void painttopleft(Graphics g, int i, int j)
+        {
+            g.drawLine(mapa[0][0].getWidth()*i+0,mapa[0][0].getHeight()*j+mapa[0][0].getHeight()/2,mapa[0][0].getWidth()*i+ mapa[0][0].getWidth()/2,mapa[0][0].getHeight()*j+ 0);
+        }
+        @Override
+        protected void paintChildren(Graphics g) {
+            super.paintChildren(g);
+            g.setColor(Color.red);
+            repaint();
+            if(paint){
+                for(int i=0;i<m;i++){
+                    for(int j=0;j<m;j++){
+                        int value = laserTable[i][j];
+                        while(value>0)
+                        {
+                            if(value/8==1)
                             {
-                                if(value/8==1)
+                                painttopleft(g,i,j);
+                                value-=8;
+                            }
+                            else
+                            {
+                                if(value/4==1)
                                 {
-                                    painttopleft(g,i,j);
-                                    value-=8;
+                                    painttopright(g,i,j);
+                                    value-=4;
                                 }
                                 else
                                 {
-                                    if(value/4==1)
+                                    if(value/2==1)
                                     {
-                                        painttopright(g,i,j);
-                                        value-=4;
+                                        paintbottomright(g, i ,j);
+                                        value-=2;
                                     }
                                     else
                                     {
-                                        if(value/2==1)
+                                        if(value == 1)
                                         {
-                                            paintbottomright(g, i ,j);
-                                            value-=2;
-                                        }
-                                        else
-                                        {
-                                            if(value == 1)
-                                            {
-                                                paintbottomleft(g,i,j);
-                                                value-=1;
-                                            }
+                                            paintbottomleft(g,i,j);
+                                            value-=1;
                                         }
                                     }
                                 }
@@ -172,6 +171,7 @@ final class LaserGame extends JFrame implements KeyListener
                     }
                 }
             }
+        }
             /*@Override
             public void paintComponent(Graphics g) {
                 //Graphics2D g2 = (Graphics2D)g;
@@ -182,19 +182,11 @@ final class LaserGame extends JFrame implements KeyListener
                 for(ListIterator<PointOfReflect> it = listOfReflect.listIterator();it.hasNext();)
                 {
                     PointOfReflect current = it.next();
-                    //PointOfReflect previous = it.previous();
-                    current.printPointOfReflect();
-                    System.out.println("ESDO");
-                    //if(it.hasPrevious())
-                    
-                        //System.out.println("ESDO2");
-                    //if(current.currentLaserX<current.previousLaserX)
+                    PointOfReflect previous = it.previous();
+                    current.printPointOfReflect();          
+                    if(current.currentLaserX<current.previousLaserX)
                     g.drawLine(mapa[0][0].getWidth()*current.currentLaserX, mapa[0][0].getHeight()*current.currentLaserY,mapa[0][0].getWidth()/2*current.previousLaserX,mapa[0][0].getHeight()/2*current.previousLaserY);
-                    
-                    
                 }
-                //g.drawLine(0, 0, 100, 100);
-                //g2.setBackground(Color.WHITE);
         }*/
             
             
@@ -472,13 +464,13 @@ final class LaserGame extends JFrame implements KeyListener
         }
     }
     boolean ifExist(ArrayList<PointOfReflect> list, PointOfReflect current) {
-    for (PointOfReflect item : list) {
-        if (item.currentLaserX==current.currentLaserX && item.currentLaserY==current.currentLaserY&&item.previousLaserX==current.previousLaserX && item.previousLaserY == current.previousLaserY)
-        {
-            return true;
+        for (PointOfReflect item : list) {
+            if (item.currentLaserX==current.currentLaserX && item.currentLaserY==current.currentLaserY&&item.previousLaserX==current.previousLaserX && item.previousLaserY == current.previousLaserY)
+            {
+                return true;
+            }
         }
-    }
-    return false;
+        return false;
     }
     boolean Exist(ArrayList<PointOfReflect> list, int currentX, int currentY) {
     for (PointOfReflect item : list) {
@@ -579,43 +571,43 @@ final class LaserGame extends JFrame implements KeyListener
     
         @Override
 	public void keyPressed(KeyEvent e) {
-		if (e.getKeyCode() == KeyEvent.VK_RIGHT){
-                    if (checkmove(currentX,currentY, 1,0) == true)
-                    {
-                        moves++;
-                        right();
-                        createLaserTable();
-                        printLaserTable();
-                        
-                    }
+            if (e.getKeyCode() == KeyEvent.VK_RIGHT){
+                if (checkmove(currentX,currentY, 1,0) == true)
+                {
+                    moves++;
+                    right();
+                    createLaserTable();
+                    printLaserTable();
+
                 }
-		else if (e.getKeyCode() == KeyEvent.VK_LEFT){
-                    if (checkmove(currentX,currentY, -1,0) == true)
-                    {
-                        moves++;
-                        left();
-                        createLaserTable();
-                        printLaserTable();
-                    }
+            }
+            else if (e.getKeyCode() == KeyEvent.VK_LEFT){
+                if (checkmove(currentX,currentY, -1,0) == true)
+                {
+                    moves++;
+                    left();
+                    createLaserTable();
+                    printLaserTable();
                 }
-                else if (e.getKeyCode() == KeyEvent.VK_UP){
-                    if (checkmove(currentX,currentY, 0,-1) == true)
-                    {
-                        moves++;
-                        up();
-                        createLaserTable();
-                        printLaserTable();
-                    }
+            }
+            else if (e.getKeyCode() == KeyEvent.VK_UP){
+                if (checkmove(currentX,currentY, 0,-1) == true)
+                {
+                    moves++;
+                    up();
+                    createLaserTable();
+                    printLaserTable();
                 }
-                else if (e.getKeyCode() == KeyEvent.VK_DOWN){
-                    if (checkmove(currentX,currentY, 0,1) == true)
-                    {
-                        moves++;
-                        down();
-                        createLaserTable();
-                        printLaserTable();
-                    }
+            }
+            else if (e.getKeyCode() == KeyEvent.VK_DOWN){
+                if (checkmove(currentX,currentY, 0,1) == true)
+                {
+                    moves++;
+                    down();
+                    createLaserTable();
+                    printLaserTable();
                 }
+            }
 		
 	}
         @Override
