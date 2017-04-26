@@ -18,36 +18,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 final class LaserGame extends JFrame implements KeyListener
-{
-
-    public class JPanelGame extends JPanel {
-
-        public JPanelGame() {
-        }
-            @Override
-            public void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                g.setColor(Color.RED);
-                for(ListIterator<PointOfReflect> it = listOfReflect.listIterator();it.hasNext();)
-                {
-                    PointOfReflect current = it.next();
-                    current.printPointOfReflect();
-                    System.out.println("ESDO");
-                    //if(it.hasPrevious())
-                    
-                        //System.out.println("ESDO2");
-                    g.drawLine(mapa[0][0].getWidth()*(current.currentLaserX+current.previousLaserX)/2, mapa[0][0].getHeight()*(current.currentLaserY+current.previousLaserY)/2,0,0);
-                    
-                }
-                System.out.println("END ");
-
-                //repaint();
-
-                //g.drawLine(0, 0, 100, 100);
-                //g2.setBackground(Color.WHITE);
-            }
-    }
-    
+{ 
     public class PointOfReflect
     {
         public int currentLaserX, currentLaserY, previousLaserX,previousLaserY;
@@ -129,15 +100,6 @@ final class LaserGame extends JFrame implements KeyListener
         addKeyListener(this);
         createLaserTable();
         printLaserTable();
-        
-        //laser = new JPanelGame();
-        /*laser.setLayout(new GridLayout(n,m));
-        for (int y = 0;y<n;y++){
-            for (int x = 0;x<m;x++){
-                    laser.add(mapa[x][y]);
-            }
-        }*/
-        //add(laser);  
     }
     class JLines extends JPanel{
             public JLines()
@@ -173,73 +135,39 @@ final class LaserGame extends JFrame implements KeyListener
                 if(paint){
                     for(int i=0;i<m;i++){
                         for(int j=0;j<m;j++){
-                            if(laserTable[i][j]==1)paintbottomleft(g,i,j);
-                            else if(laserTable[i][j]==2)paintbottomright(g, i ,j);
-                            else if(laserTable[i][j]==3)
-                                {
-                                    paintbottomright(g, i ,j);
-                                    paintbottomleft(g,i,j);
-                                }
-                            else if(laserTable[i][j]==4)painttopright(g,i,j);
-                            else if(laserTable[i][j]==5)
-                                {
-                                    painttopright(g,i,j);
-                                    paintbottomleft(g,i,j);   
-                                }
-                            else if(laserTable[i][j]==6)
-                                {
-                                    painttopright(g,i,j);
-                                    paintbottomright(g,i,j);   
-                                }
-                            else if(laserTable[i][j]==7)
-                                {
-                                    painttopright(g,i,j);
-                                    paintbottomright(g,i,j); 
-                                    paintbottomleft(g,i,j);   
-                                }
-                            else if(laserTable[i][j]==8)painttopleft(g,i,j);
-                            else if(laserTable[i][j]==9)
+                            int value = laserTable[i][j];
+                            while(value>0)
                             {
-                                painttopleft(g,i,j);
-                                paintbottomleft(g,i,j);
-
+                                if(value/8==1)
+                                {
+                                    painttopleft(g,i,j);
+                                    value-=8;
+                                }
+                                else
+                                {
+                                    if(value/4==1)
+                                    {
+                                        painttopright(g,i,j);
+                                        value-=4;
+                                    }
+                                    else
+                                    {
+                                        if(value/2==1)
+                                        {
+                                            paintbottomright(g, i ,j);
+                                            value-=2;
+                                        }
+                                        else
+                                        {
+                                            if(value == 1)
+                                            {
+                                                paintbottomleft(g,i,j);
+                                                value-=1;
+                                            }
+                                        }
+                                    }
+                                }
                             }
-                            else if(laserTable[i][j]==10)
-                            {
-                                painttopleft(g,i,j);
-                                paintbottomright(g,i,j);
-                            }
-                            else if(laserTable[i][j]==11)
-                            {
-                                painttopleft(g,i,j);
-                                paintbottomright(g,i,j);
-                                paintbottomleft(g,i,j);
-                            }
-                            else if(laserTable[i][j]==12)
-                                {
-                                    painttopleft(g,i,j);
-                                    painttopright(g,i,j); 
-                                }
-                            else if(laserTable[i][j]==13)
-                                {
-                                    painttopleft(g,i,j);
-                                    painttopright(g,i,j);
-                                    paintbottomleft(g,i,j);   
-                                }
-                            else if(laserTable[i][j]==14)
-                                {
-                                    painttopleft(g,i,j);
-                                    painttopright(g,i,j);
-                                    paintbottomright(g,i,j);   
-                                }
-                            else if(laserTable[i][j]==15)
-                                {
-                                    painttopleft(g,i,j);
-                                    painttopright(g,i,j);
-                                    paintbottomright(g,i,j); 
-                                    paintbottomleft(g,i,j);   
-                                }
-
                         }
                     }
                 }
@@ -280,19 +208,9 @@ final class LaserGame extends JFrame implements KeyListener
                 {
                     PointOfReflect current = it.next();
                     current.printPointOfReflect();
-                    System.out.println("ESDO");
-                    //if(it.hasPrevious())
-                    
-                        //System.out.println("ESDO2");
                     g.drawLine(mapa[0][0].getWidth()*(current.currentLaserX+current.previousLaserX)/2, mapa[0][0].getHeight()*(current.currentLaserY+current.previousLaserY)/2,0,0);
                     
                 }
-                System.out.println("END ");
-
-                //repaint();
-
-                //g.drawLine(0, 0, 100, 100);
-                //g2.setBackground(Color.WHITE);
             }
         
     
