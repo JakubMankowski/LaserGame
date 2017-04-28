@@ -1,0 +1,10 @@
+layout as 2 jpanel in 1 frame
+add buttons in 2nd jpanel
+switch jlabel to drawRectangle
+add images for tank, mirrors
+set images rotate when keyPressed (when up images is rotated to up position etc.)
+
+delete initTable()
+change creating table logic to add posibility get 0;0 position etc.
+
+add list of mirrors connected with laser
