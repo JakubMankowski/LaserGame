@@ -7,10 +7,13 @@ import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.ListIterator;
 import java.util.Random;
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -60,9 +63,17 @@ final class LaserGame extends JFrame implements KeyListener
     int laserTable[][];
     ArrayList<PointOfReflect> listOfReflect;
     //ListIterator<PointOfReflect> it;
+    private BufferedImage imgTank;
     
     LaserGame()
     {
+        try{
+            imgTank = ImageIO.read(new File("tank.jpg"));
+        }
+        catch(IOException e)
+        {
+            e.printStackTrace();;
+        }
         laserTable = new int[m][n];
         mapa = new JLabel [m][n];
         panel = new JLines();
@@ -104,11 +115,6 @@ final class LaserGame extends JFrame implements KeyListener
     class JLines extends JPanel{
         public JLines()
         {
-
-        }
-        public Graphics getGraph()
-        {
-            return this.getGraphics();
         }
         public void paintbottomright(Graphics g, int i, int j) // topleft
         {
@@ -169,11 +175,17 @@ final class LaserGame extends JFrame implements KeyListener
                 }
             }
         }
+        public void drawTank(Graphics g)
+        {
+            //g.drawImage(imgTank, currentX*panel.getWidth()/m, currentY*panel.getHeight()/n, laser);
+            g.drawImage(imgTank, currentX*panel.getWidth()/m, currentY*panel.getHeight()/n,panel.getWidth()/n, panel.getHeight()/n, laser);
+        }
         @Override
         protected void paintChildren(Graphics g) {
             super.paintChildren(g);
             g.setColor(Color.red);
             repaint();
+            drawTank(g);
             drawLine(g);
             
         }
