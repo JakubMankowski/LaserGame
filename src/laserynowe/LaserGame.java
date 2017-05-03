@@ -3,18 +3,14 @@ package laserynowe;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.ListIterator;
 import java.util.Random;
-import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -38,47 +34,46 @@ final class LaserGame extends JFrame implements KeyListener
         }
     }
     
-    static int n= 20; 
-    static int m = 20;
-    static int currentX=7;
-    static int currentY=6;
+    static int m = 16;
+    static int n= 16; 
+    static int currentX=5;
+    static int currentY=11;
     static boolean win = false;
     static boolean up = false;
     static boolean down = false;
     static boolean left = false;
     static boolean right = false;
-    static int currentLaserX = 1;
-    static int currentLaserY = 1;
-    static int previousLaserX = 0;
-    static int previousLaserY = 1;
-    static int previouspreviousLaserX = 0;
-    static int previouspreviousLaserY = 0;
-    static int winningPointX = 6;
-    static int winningPointY = 8;
+    static int currentLaserX;
+    static int currentLaserY;
+    static int previousLaserX;
+    static int previousLaserY;
+    static int previouspreviousLaserX;
+    static int previouspreviousLaserY;
+    static int winningPointX = 12;
+    static int winningPointY = 11;
     static boolean paint = true;
     static int moves = 0;
     JLabel mapa[][];
     JPanel panel;
-    JPanel laser;
+    JPanel menu;
+    JButton button1;
+    JButton button2;
+    JButton button3;
     int laserTable[][];
+    int mapTable[][];
     ArrayList<PointOfReflect> listOfReflect;
-    //ListIterator<PointOfReflect> it;
-    private BufferedImage imgTank;
     
     LaserGame()
     {
-        try{
-            imgTank = ImageIO.read(new File("tank.jpg"));
-        }
-        catch(IOException e)
-        {
-            e.printStackTrace();;
-        }
+        setLaserStartPoint();
+        
         laserTable = new int[m][n];
+        mapTable = new int[m][n];
         mapa = new JLabel [m][n];
         panel = new JLines();
         
         listOfReflect = new ArrayList<PointOfReflect>();
+        
         for (int y = 0;y<n;y++){
             for (int x = 0;x<m;x++){
                 mapa[x][y] = new JLabel();
@@ -87,7 +82,7 @@ final class LaserGame extends JFrame implements KeyListener
                 mapa[x][y].setEnabled(true);
                 mapa[x][y].setOpaque(true);
                 //mapa[x][y].setBorder(BorderFactory.createLineBorder(Color.BLACK));
-                mapa[x][y].setPreferredSize(new Dimension(50,50));      
+                mapa[x][y].setPreferredSize(new Dimension(0,0));      
             }
         }
         panel.setLayout(new GridLayout(n,m));
@@ -97,17 +92,82 @@ final class LaserGame extends JFrame implements KeyListener
             }
         }
         add(panel);
-        initLabel();
-        for(int i=1;i<n-1;i++)
+        button1 = new JButton("START");
+        button2 = new JButton("SETLEVEL");
+        button3 = new JButton("QUIT");
+        menu = new JPanel();
+        menu.setBounds(panel.getWidth(), 0, panel.getWidth()/5, panel.getHeight());
+        menu.setBackground(Color.blue);
+        menu.setLayout(new GridLayout(3,0));
+        menu.add(button1);
+        menu.add(button2);
+        menu.add(button3);
+        add(menu);
+        setLayout(new GridLayout(2,0));
+        
+        mapa[previousLaserX][previousLaserY].setBackground(Color.green);
+        mapa[3][0].setBackground(Color.white);
+        mapa[5][0].setBackground(Color.white);
+        mapa[14][0].setBackground(Color.white);
+        mapa[1][1].setBackground(Color.white);
+        mapa[3][1].setBackground(Color.white);
+        mapa[7][1].setBackground(Color.white);
+        mapa[9][1].setBackground(Color.white);
+        mapa[12][1].setBackground(Color.white);
+        mapa[7][2].setBackground(Color.white);
+        mapa[9][2].setBackground(Color.white);
+        mapa[13][2].setBackground(Color.white);
+        mapa[2][3].setBackground(Color.white);
+        mapa[3][3].setBackground(Color.white);
+        mapa[11][3].setBackground(Color.white);
+        mapa[5][4].setBackground(Color.white);
+        mapa[7][4].setBackground(Color.white);
+        mapa[9][4].setBackground(Color.white);
+        mapa[0][5].setBackground(Color.white);
+        mapa[2][5].setBackground(Color.white);
+        mapa[6][5].setBackground(Color.white);
+        mapa[11][5].setBackground(Color.white);
+        mapa[12][5].setBackground(Color.white);
+        mapa[13][5].setBackground(Color.white);
+        mapa[15][5].setBackground(Color.white);
+        mapa[0][6].setBackground(Color.white);
+        mapa[6][6].setBackground(Color.white);
+        mapa[8][6].setBackground(Color.white);
+        mapa[0][7].setBackground(Color.white);
+        mapa[4][7].setBackground(Color.white);
+        mapa[9][7].setBackground(Color.white);
+        mapa[11][8].setBackground(Color.white); 
+        mapa[14][8].setBackground(Color.white);
+        mapa[1][9].setBackground(Color.white);
+        mapa[3][9].setBackground(Color.white);
+        mapa[7][9].setBackground(Color.white);
+        mapa[9][9].setBackground(Color.white);
+        mapa[0][10].setBackground(Color.white);
+        mapa[12][10].setBackground(Color.white);
+        mapa[1][11].setBackground(Color.white);
+        mapa[7][11].setBackground(Color.white);
+        mapa[13][11].setBackground(Color.white);
+        mapa[14][11].setBackground(Color.white);
+        mapa[15][11].setBackground(Color.white);
+        
+        mapa[3][2].setBackground(Color.gray);
+        mapa[14][5].setBackground(Color.gray);
+        mapa[7][7].setBackground(Color.gray);
+        mapa[7][10].setBackground(Color.gray);
+        mapa[11][7].setBackground(Color.gray);
+        
+        //initLabel();
+        /*for(int i=1;i<n-1;i++)
             for(int j=0 ; j<m-1;j++)
-                if((i+j) % 4==0)mapa[i][j].setBackground(Color.gray);
+                if((i+j) % 4==0)mapa[i][j].setBackground(Color.gray);*/
         
         mapa[winningPointX][winningPointY].setBackground(Color.red);
         
         mapa[currentX][currentY].setBackground(Color.YELLOW);
         
         setFocusable(true);
-        setSize(500,500);
+        setSize(600,800);
+        setResizable(true);
         addKeyListener(this);
         createLaserTable();
         printLaserTable();
@@ -116,14 +176,13 @@ final class LaserGame extends JFrame implements KeyListener
         public JLines()
         {
         }
-        public void paintbottomright(Graphics g, int i, int j) // topleft
+        public void paintbottomright(Graphics g, int i, int j)
         {
-            g.drawLine(mapa[0][0].getWidth()*i+mapa[0][0].getWidth()/2,mapa[0][0].getHeight()*j+mapa[0][0].getHeight(),mapa[0][0].getWidth()*i+mapa[0][0].getWidth(),mapa[0][0].getHeight()*j+ mapa[0][0].getHeight()/2); // dolny prawy
-
+            g.drawLine(mapa[0][0].getWidth()*i+mapa[0][0].getWidth()/2,mapa[0][0].getHeight()*j+mapa[0][0].getHeight(),mapa[0][0].getWidth()*i+mapa[0][0].getWidth(),mapa[0][0].getHeight()*j+ mapa[0][0].getHeight()/2);
         }
         public void paintbottomleft(Graphics g, int i, int j)
         {
-            g.drawLine(mapa[0][0].getWidth()*i+0,mapa[0][0].getHeight()*j+mapa[0][0].getHeight()/2, mapa[0][0].getWidth()*i+mapa[0][0].getWidth()/2,mapa[0][0].getHeight()*j+ mapa[0][0].getHeight()); // dolny lewy
+            g.drawLine(mapa[0][0].getWidth()*i+0,mapa[0][0].getHeight()*j+mapa[0][0].getHeight()/2, mapa[0][0].getWidth()*i+mapa[0][0].getWidth()/2,mapa[0][0].getHeight()*j+ mapa[0][0].getHeight());
         }
         public void painttopright(Graphics g, int i, int j)
         {
@@ -177,66 +236,30 @@ final class LaserGame extends JFrame implements KeyListener
         }
         public void drawTank(Graphics g)
         {
-            //g.drawImage(imgTank, currentX*panel.getWidth()/m, currentY*panel.getHeight()/n, laser);
-            g.drawImage(imgTank, currentX*panel.getWidth()/m, currentY*panel.getHeight()/n,panel.getWidth()/n, panel.getHeight()/n, laser);
         }
         @Override
-        protected void paintChildren(Graphics g) {
+        protected void paintChildren(Graphics g) 
+        {
             super.paintChildren(g);
-            g.setColor(Color.red);
+            g.setColor(Color.green);
             repaint();
             drawTank(g);
             drawLine(g);
             
-        }
-            /*@Override
-            public void paintComponent(Graphics g) {
-                //Graphics2D g2 = (Graphics2D)g;
-                super.paintComponent(g);
-                g.setColor(Color.GREEN);
-                paintbottomright(g);
-                //repaint();
-                for(ListIterator<PointOfReflect> it = listOfReflect.listIterator();it.hasNext();)
-                {
-                    PointOfReflect current = it.next();
-                    PointOfReflect previous = it.previous();
-                    current.printPointOfReflect();          
-                    if(current.currentLaserX<current.previousLaserX)
-                    g.drawLine(mapa[0][0].getWidth()*current.currentLaserX, mapa[0][0].getHeight()*current.currentLaserY,mapa[0][0].getWidth()/2*current.previousLaserX,mapa[0][0].getHeight()/2*current.previousLaserY);
-                }
-        }*/
-            
-            
+        }       
     }
-            
-    
-    /*public final void paintComponent(Graphics g) {
-        //super.paintComponent(g);
-        g.setColor(Color.RED);
-        for(ListIterator<PointOfReflect> it = listOfReflect.listIterator();it.hasNext();)
-        {
-            PointOfReflect current = it.next();
-            current.printPointOfReflect();
-            g.drawLine(mapa[0][0].getWidth()*(current.currentLaserX+current.previousLaserX)/2, mapa[0][0].getHeight()*(current.currentLaserY+current.previousLaserY)/2,0,0);
-
+    private void initLabel()
+    {
+        for (int i = 0;i<m;i++){
+            mapa[i][0].setBackground(Color.GRAY);
+            mapa[i][n-1].setBackground(Color.GRAY);
         }
-    }*/
-        
-    
-    
-    
-        private void initLabel()
-        {
-            for (int i = 0;i<m;i++){
-                mapa[i][0].setBackground(Color.GRAY);
-                mapa[i][n-1].setBackground(Color.GRAY);
-            }
-            for (int i = 0;i<n;i++){
-                mapa[0][i].setBackground(Color.GRAY);
-                mapa[m-1][i].setBackground(Color.GRAY);     
-            }
+        for (int i = 0;i<n;i++){
+            mapa[0][i].setBackground(Color.GRAY);
+            mapa[m-1][i].setBackground(Color.GRAY);     
         }
-        public void zerosLaserTable()
+    }
+    public void zerosLaserTable()
     {
         for (int i = 0;i<m;i++)
         {
@@ -257,202 +280,156 @@ final class LaserGame extends JFrame implements KeyListener
             System.out.print("\n");
         }
     }
+    private void setLaser(int dcx, int dcy, int dpx, int dpy, int dppx, int dppy, int value)
+    {
+        laserTable[currentLaserX][currentLaserY]+=value;
+        currentLaserX +=dcx;
+        currentLaserY +=dcy;
+        previousLaserX +=dpx;
+        previousLaserY +=dpy;
+        previouspreviousLaserX +=dppx;
+        previouspreviousLaserY +=dppy;
+    }
+    private void setLaserStartPoint()
+    {
+        currentLaserX = 4;
+        currentLaserY = 5;
+        previousLaserX = 4;
+        previousLaserY = 6;
+        previouspreviousLaserX = 5;
+        previouspreviousLaserY = 6;
+    }
+    private void createOneLaserField() throws ArrayIndexOutOfBoundsException
+    {
+        if(currentLaserX > previousLaserX && currentLaserY == previousLaserY && previousLaserY > previouspreviousLaserY)
+        { 
+            if(mapa[currentLaserX][currentLaserY+1].getBackground() == Color.GRAY || mapa[currentLaserX][currentLaserY+1].getBackground() == Color.WHITE)
+            {
+                listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
+                setLaser(0,0,1,1,0,2,1);
+
+            }
+            else
+            {
+                listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
+                setLaser(0,1,1,0,0,1,1);
+            }
+        }
+        else if(currentLaserX > previousLaserX && currentLaserY == previousLaserY && previousLaserY < previouspreviousLaserY)
+        {
+            if(mapa[currentLaserX][currentLaserY-1].getBackground() == Color.GRAY || mapa[currentLaserX][currentLaserY-1].getBackground() == Color.WHITE)
+            {
+                listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
+                setLaser(0,0,1,-1,0,-2,8);
+            }
+            else
+            {
+                listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
+                setLaser(0,-1,1,0,0,-1,8);
+            } 
+        }
+        else if(currentLaserX < previousLaserX && currentLaserY == previousLaserY && previousLaserY > previouspreviousLaserY)
+        {
+            if(mapa[currentLaserX][currentLaserY+1].getBackground() == Color.GRAY || mapa[currentLaserX][currentLaserY+1].getBackground() == Color.WHITE)
+            {
+                listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
+                setLaser(0,0,-1,1,0,2,2);
+            }
+            else
+            {
+                listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
+                setLaser(0,1,-1,0,0,1,2);
+            } 
+        }
+        else if(currentLaserX < previousLaserX && currentLaserY == previousLaserY && previousLaserY < previouspreviousLaserY)
+        {
+            if(mapa[currentLaserX][currentLaserY-1].getBackground() == Color.GRAY || mapa[currentLaserX][currentLaserY-1].getBackground() == Color.WHITE)
+            {
+                listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
+                setLaser(0,0,-1,-1,0,-2,4);
+
+            }
+            else
+            {
+                listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
+                setLaser(0,-1,-1,0,0,-1,4);
+            } 
+        }
+        else if(currentLaserX == previousLaserX && currentLaserY > previousLaserY && previousLaserX > previouspreviousLaserX)
+        {  
+            if(mapa[currentLaserX+1][currentLaserY].getBackground() == Color.GRAY || mapa[currentLaserX+1][currentLaserY].getBackground() == Color.WHITE)
+            {
+                listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
+                setLaser(0,0,1,1,2,0,4);
+
+            }
+            else
+            {
+                listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
+                setLaser(1,0,0,1,1,0,4);
+            }
+        }
+        else if(currentLaserX == previousLaserX && currentLaserY > previousLaserY && previousLaserX < previouspreviousLaserX)
+        {
+            if(mapa[currentLaserX-1][currentLaserY].getBackground() == Color.GRAY || mapa[currentLaserX-1][currentLaserY].getBackground() == Color.WHITE)
+            {
+                listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
+                setLaser(0,0,-1,1,-2,0,8);
+
+            }
+            else
+            {
+                listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
+                setLaser(-1,0,0,1,-1,0,8);
+            } 
+        }
+        else if(currentLaserX == previousLaserX && currentLaserY < previousLaserY && previousLaserX > previouspreviousLaserX)
+        {
+            if(mapa[currentLaserX+1][currentLaserY].getBackground() == Color.GRAY || mapa[currentLaserX+1][currentLaserY].getBackground() == Color.WHITE)
+            {
+                listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
+                setLaser(0,0,1,-1,2,0,2);
+
+            }
+            else
+            {
+                listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
+                setLaser(1,0,0,-1,1,0,2);
+            } 
+        }
+        else if(currentLaserX == previousLaserX && currentLaserY < previousLaserY && previousLaserX < previouspreviousLaserX)
+        {
+            if(mapa[currentLaserX-1][currentLaserY].getBackground() == Color.GRAY||mapa[currentLaserX-1][currentLaserY].getBackground() == Color.WHITE)
+            {
+                // jest odbicie
+                listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
+                setLaser(0,0,-1,-1,-2,0,1);
+            }
+            else
+            {
+                // nie ma odbicia 
+                listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
+                setLaser(-1,0,0,-1,-1,0,1);            
+            } 
+        }
+    }
     public void createLaserTable()
     {
         zerosLaserTable();
         PointOfReflect currentPoint = new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY);
-        if(!listOfReflect.isEmpty())
-        listOfReflect.clear();
+        if(!listOfReflect.isEmpty())listOfReflect.clear();
         if(mapa[currentLaserX][currentLaserY].getBackground()==Color.GRAY){}
         else{
             listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
             do
             {
-                if(currentLaserX > previousLaserX && currentLaserY == previousLaserY && previousLaserY > previouspreviousLaserY)
-                {
-                    laserTable[currentLaserX][currentLaserY]+=1;  
-                    if(mapa[currentLaserX][currentLaserY+1].getBackground() == Color.GRAY)
-                    {
-                        // jest odbicie
-                        listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
-                        System.out.println(currentLaserX+""+currentLaserY+""+previousLaserX+""+previousLaserY+" Laser1");
-                        previousLaserX++;
-                        previousLaserY++;
-                        previouspreviousLaserY+=2;
-                        
-                    }
-                    else
-                    {
-                        // nie ma odbicia
-                        listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
-                        currentLaserY++;
-                        previousLaserX++;
-                        previouspreviousLaserY++;
-                        System.out.println("Claser 1");
-
-                    }
+                try{
+                createOneLaserField();
                 }
-                else if(currentLaserX > previousLaserX && currentLaserY == previousLaserY && previousLaserY < previouspreviousLaserY)
+                catch(ArrayIndexOutOfBoundsException e)
                 {
-                    laserTable[currentLaserX][currentLaserY]+=8;
-                    if(mapa[currentLaserX][currentLaserY-1].getBackground() == Color.GRAY)
-                    {
-                        // jest odbicie
-                        listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
-                        System.out.println(currentLaserX+""+currentLaserY+""+previousLaserX+""+previousLaserY+" Laser8");
-                        previousLaserX++;
-                        previousLaserY--;
-                        previouspreviousLaserY-=2;
-                    }
-                    else
-                    {
-                        // nie ma odbicia 
-                        listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
-                        currentLaserY--;
-                        previousLaserX++;
-                        previouspreviousLaserY--;
-                        System.out.println("Claser 8");
-                    } 
-                }
-                else if(currentLaserX < previousLaserX && currentLaserY == previousLaserY && previousLaserY > previouspreviousLaserY)
-                {
-                    laserTable[currentLaserX][currentLaserY]+=2;
-                    if(mapa[currentLaserX][currentLaserY+1].getBackground() == Color.GRAY)
-                    {
-                        // jest odbicie
-                        listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
-                        System.out.println(currentLaserX+""+currentLaserY+""+previousLaserX+""+previousLaserY+" Laser2");
-                        previousLaserY++;
-                        previousLaserX--;
-                        previouspreviousLaserY+=2;
-
-                    }
-                    else
-                    {
-                        // nie ma odbicia 
-                        listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
-                        currentLaserY++;
-                        previousLaserX--;
-                        previouspreviousLaserY++;
-                        System.out.println("Claser 2");
-                    } 
-                }
-                else if(currentLaserX < previousLaserX && currentLaserY == previousLaserY && previousLaserY < previouspreviousLaserY)
-                {
-                    laserTable[currentLaserX][currentLaserY]+=4;
-                    if(mapa[currentLaserX][currentLaserY-1].getBackground() == Color.GRAY)
-                    {
-                        // jest odbicie
-                        listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
-                        System.out.println(currentLaserX+""+currentLaserY+""+previousLaserX+""+previousLaserY+" Laser4");
-                        previousLaserX--;
-                        previousLaserY--;
-                        previouspreviousLaserY-=2;
-
-                    }
-                    else
-                    {
-                        // nie ma odbicia 
-                        listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
-                        currentLaserY--;
-                        previousLaserX--;
-                        previouspreviousLaserY--;
-                        System.out.println("Claser 4");
-                    } 
-                }
-                else if(currentLaserX == previousLaserX && currentLaserY > previousLaserY && previousLaserX > previouspreviousLaserX)
-                {
-                    laserTable[currentLaserX][currentLaserY]+=4;  
-                    if(mapa[currentLaserX+1][currentLaserY].getBackground() == Color.GRAY)
-                    {
-                        // jest odbicie
-                        listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
-                        System.out.println(currentLaserX+""+currentLaserY+""+previousLaserX+""+previousLaserY+"LASER4");
-                        previousLaserX++;
-                        previousLaserY++;
-                        previouspreviousLaserX+=2;
-
-                    }
-                    else
-                    {
-                        // nie ma odbicia
-                        listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
-                        currentLaserX++;
-                        previousLaserY++;
-                        previouspreviousLaserX++;
-                        System.out.println("CLASER 4");
-
-                    }
-                }
-                else if(currentLaserX == previousLaserX && currentLaserY > previousLaserY && previousLaserX < previouspreviousLaserX)
-                {
-                    laserTable[currentLaserX][currentLaserY]+=8;
-                    if(mapa[currentLaserX-1][currentLaserY].getBackground() == Color.GRAY)
-                    {
-                        // jest odbicie
-                        listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
-                        System.out.println(currentLaserX+""+currentLaserY+""+previousLaserX+""+previousLaserY+"LASER8");
-                        previousLaserX--;
-                        previousLaserY++;
-                        previouspreviousLaserX-=2;
-
-                    }
-                    else
-                    {
-                        // nie ma odbicia 
-                        listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
-                        currentLaserX--;
-                        previousLaserY++;
-                        previouspreviousLaserX--;
-                        System.out.println("CLASER 8");
-                    } 
-                }
-                else if(currentLaserX == previousLaserX && currentLaserY < previousLaserY && previousLaserX > previouspreviousLaserX)
-                {
-                    laserTable[currentLaserX][currentLaserY]+=2;
-                    if(mapa[currentLaserX+1][currentLaserY].getBackground() == Color.GRAY)
-                    {
-                        // jest odbicie
-                        listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
-                        System.out.println(currentLaserX+""+currentLaserY+""+previousLaserX+""+previousLaserY+" LASER2");
-                        previousLaserX++;
-                        previousLaserY--;
-                        previouspreviousLaserX+=2;
-
-                    }
-                    else
-                    {
-                        //nie ma odbicia
-                        listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
-                        currentLaserX++;
-                        previousLaserY--;
-                        previouspreviousLaserX++;
-                        System.out.println("CLASER 2");
-                    } 
-                }
-                else if(currentLaserX == previousLaserX && currentLaserY < previousLaserY && previousLaserX < previouspreviousLaserX)
-                {
-                    laserTable[currentLaserX][currentLaserY]+=1;
-                    if(mapa[currentLaserX-1][currentLaserY].getBackground() == Color.GRAY)
-                    {
-                        // jest odbicie
-                        listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
-                        System.out.println(currentLaserX+""+currentLaserY+""+previousLaserX+""+previousLaserY+"LASER1");
-                        previousLaserX--;
-                        previousLaserY--;
-                        previouspreviousLaserX-=2;
-                    }
-                    else
-                    {
-                        // nie ma odbicia 
-                        listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
-                        currentLaserX--;
-                        previousLaserY--;
-                        previouspreviousLaserX--;
-                        
-                        System.out.println("CLASER 1");
-                        
-                    } 
+                    setLaserStartPoint();
+                    break;
                 }
                 if(currentLaserX==winningPointX && currentLaserY == winningPointY)
                 {
@@ -472,7 +449,6 @@ final class LaserGame extends JFrame implements KeyListener
                     //win = false;
                     //mapa[winningPointX][winningPointY].setBackground(Color.RED);
                 }
-
                 currentPoint= new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY);
 
 
@@ -498,141 +474,157 @@ final class LaserGame extends JFrame implements KeyListener
     }
     return false;
     }
-        public boolean checkmove(int x, int y, int dx, int dy){
-		if (((x+dx-1) > -1) && ((x+dx+1) < n) && ((y+dy-1) > -1) && ((y+dy+1) < m)){
-			return true;
-		} else {
-			return false;
-		}
-	}
-        private void up() {
-        if(mapa[currentX][currentY-1].getBackground()==Color.BLACK)
-        {
-            mapa[currentX][currentY-1].setBackground(Color.YELLOW);
-            mapa[currentX][currentY].setBackground(Color.BLACK);
-            currentY--;
+    public boolean checkmove(int x, int y, int dx, int dy){
+            if (((x+dx) > -1) && ((x+dx) < n) && ((y+dy) > -1) && ((y+dy) < m)){
+                    return true;
+            } else {
+                    return false;
+            }
+    }
+    private void up() {
+        try{
+            if(mapa[currentX][currentY-1].getBackground()==Color.BLACK)
+            {
+
+                mapa[currentX][currentY-1].setBackground(Color.YELLOW);
+                mapa[currentX][currentY].setBackground(Color.BLACK);
+                currentY--;
+            }
+            else if(mapa[currentX][currentY-1].getBackground()==Color.GRAY && mapa[currentX][currentY-2].getBackground()==Color.BLACK)
+            {
+                mapa[currentX][currentY-2].setBackground(Color.GRAY);
+                mapa[currentX][currentY-1].setBackground(Color.YELLOW);
+                mapa[currentX][currentY].setBackground(Color.BLACK);
+                currentY--;
+            }
+            else
+            {
+            }
         }
-        else if(mapa[currentX][currentY-1].getBackground()==Color.GRAY && mapa[currentX][currentY-2].getBackground()==Color.BLACK)
-        {
-            mapa[currentX][currentY-2].setBackground(Color.GRAY);
-            mapa[currentX][currentY-1].setBackground(Color.YELLOW);
-            mapa[currentX][currentY].setBackground(Color.BLACK);
-            currentY--;
-        }
-        else
-        {
+        catch(ArrayIndexOutOfBoundsException e)
+        {  
         }
     }
-
     private void down() {
-        if(mapa[currentX][currentY+1].getBackground()==Color.BLACK)
-        {
-            mapa[currentX][currentY+1].setBackground(Color.YELLOW);
-            mapa[currentX][currentY].setBackground(Color.BLACK);
-            currentY++;
+        try{
+            if(mapa[currentX][currentY+1].getBackground()==Color.BLACK)
+            {
+                mapa[currentX][currentY+1].setBackground(Color.YELLOW);
+                mapa[currentX][currentY].setBackground(Color.BLACK);
+                currentY++;
+            }
+            else if(mapa[currentX][currentY+1].getBackground()==Color.GRAY && mapa[currentX][currentY+2].getBackground()==Color.BLACK)
+            {
+                mapa[currentX][currentY+2].setBackground(Color.GRAY);
+                mapa[currentX][currentY+1].setBackground(Color.YELLOW);
+                mapa[currentX][currentY].setBackground(Color.BLACK);
+                currentY++;
+            }
+            else
+            {
+            }
         }
-        else if(mapa[currentX][currentY+1].getBackground()==Color.GRAY && mapa[currentX][currentY+2].getBackground()==Color.BLACK)
+        catch(ArrayIndexOutOfBoundsException e)
         {
-            mapa[currentX][currentY+2].setBackground(Color.GRAY);
-            mapa[currentX][currentY+1].setBackground(Color.YELLOW);
-            mapa[currentX][currentY].setBackground(Color.BLACK);
-            currentY++;
-        }
-        else
-        {
+            
         }
     }
-    
     private void left() {
-        if(mapa[currentX-1][currentY].getBackground()==Color.BLACK)
-        {
-            mapa[currentX-1][currentY].setBackground(Color.YELLOW);
-            mapa[currentX][currentY].setBackground(Color.BLACK);
-            currentX--;
+        try{
+            if(mapa[currentX-1][currentY].getBackground()==Color.BLACK)
+            {
+                mapa[currentX-1][currentY].setBackground(Color.YELLOW);
+                mapa[currentX][currentY].setBackground(Color.BLACK);
+                currentX--;
+            }
+            else if(mapa[currentX-1][currentY].getBackground()==Color.GRAY && mapa[currentX-2][currentY].getBackground()==Color.BLACK)
+            {
+                mapa[currentX-2][currentY].setBackground(Color.GRAY);
+                mapa[currentX-1][currentY].setBackground(Color.YELLOW);
+                mapa[currentX][currentY].setBackground(Color.BLACK);
+                currentX--;
+            }
+            else
+            {
+            }
         }
-        else if(mapa[currentX-1][currentY].getBackground()==Color.GRAY && mapa[currentX-2][currentY].getBackground()==Color.BLACK)
+        catch(ArrayIndexOutOfBoundsException e)
         {
-            mapa[currentX-2][currentY].setBackground(Color.GRAY);
-            mapa[currentX-1][currentY].setBackground(Color.YELLOW);
-            mapa[currentX][currentY].setBackground(Color.BLACK);
-            currentX--;
-        }
-        else
-        {
+            
         }
     }
-
     private void right() {
-        if(mapa[currentX+1][currentY].getBackground()==Color.BLACK)
-        {
-            mapa[currentX+1][currentY].setBackground(Color.YELLOW);
-            mapa[currentX][currentY].setBackground(Color.BLACK);
-            currentX++;
+        try{
+            if(mapa[currentX+1][currentY].getBackground()==Color.BLACK)
+            {
+                mapa[currentX+1][currentY].setBackground(Color.YELLOW);
+                mapa[currentX][currentY].setBackground(Color.BLACK);
+                currentX++;
+            }
+            else if(mapa[currentX+1][currentY].getBackground()==Color.GRAY && mapa[currentX+2][currentY].getBackground()==Color.BLACK)
+            {
+                mapa[currentX+2][currentY].setBackground(Color.GRAY);
+                mapa[currentX+1][currentY].setBackground(Color.YELLOW);
+                mapa[currentX][currentY].setBackground(Color.BLACK);
+                currentX++;
+            }
+            else
+            {
+            }
         }
-        else if(mapa[currentX+1][currentY].getBackground()==Color.GRAY && mapa[currentX+2][currentY].getBackground()==Color.BLACK)
+        catch(ArrayIndexOutOfBoundsException e)
         {
-            mapa[currentX+2][currentY].setBackground(Color.GRAY);
-            mapa[currentX+1][currentY].setBackground(Color.YELLOW);
-            mapa[currentX][currentY].setBackground(Color.BLACK);
-            currentX++;
-        }
-        else
-        {
+            
         }
     }
-    public void win()
-    {
+    public void win(){
         Component temporaryLostComponent = null;
 	JOptionPane.showMessageDialog(temporaryLostComponent, "You scored: "+moves+". Well done!");
     }
     
-        @Override
-	public void keyPressed(KeyEvent e) {
-            if (e.getKeyCode() == KeyEvent.VK_RIGHT){
-                if (checkmove(currentX,currentY, 1,0) == true)
-                {
-                    moves++;
-                    right();
-                    createLaserTable();
-                    printLaserTable();
+    @Override
+    public void keyPressed(KeyEvent e) {        
+        if (e.getKeyCode() == KeyEvent.VK_RIGHT){
+            if (checkmove(currentX,currentY, 1,0) == true)
+            {
+                moves++;          
+                right();
+                createLaserTable();
+                printLaserTable();
+            }
+        }
+        else if (e.getKeyCode() == KeyEvent.VK_LEFT){
+            if (checkmove(currentX,currentY, -1,0) == true){
+                moves++;
+                left();
+                createLaserTable();
+                printLaserTable();
 
-                }
             }
-            else if (e.getKeyCode() == KeyEvent.VK_LEFT){
-                if (checkmove(currentX,currentY, -1,0) == true)
-                {
-                    moves++;
-                    left();
-                    createLaserTable();
-                    printLaserTable();
-                }
+        }
+        else if (e.getKeyCode() == KeyEvent.VK_UP){
+            if (checkmove(currentX,currentY, 0,-1) == true){
+                moves++;
+                up();
+                createLaserTable();
+                printLaserTable();
             }
-            else if (e.getKeyCode() == KeyEvent.VK_UP){
-                if (checkmove(currentX,currentY, 0,-1) == true)
-                {
-                    moves++;
-                    up();
-                    createLaserTable();
-                    printLaserTable();
-                }
+        }
+        else if (e.getKeyCode() == KeyEvent.VK_DOWN){
+            if (checkmove(currentX,currentY, 0,1) == true){
+                moves++;
+                down();
+                createLaserTable();
+                printLaserTable();
             }
-            else if (e.getKeyCode() == KeyEvent.VK_DOWN){
-                if (checkmove(currentX,currentY, 0,1) == true)
-                {
-                    moves++;
-                    down();
-                    createLaserTable();
-                    printLaserTable();
-                }
-            }
-		
-	}
-        @Override
-	public void keyReleased(KeyEvent e) {
-            
-	}
-        @Override
-	public void keyTyped(KeyEvent e) {
+        }	
+    }
+    @Override
+    public void keyReleased(KeyEvent e) {
 
-	}
+    }
+    @Override
+    public void keyTyped(KeyEvent e) {
+
+    }
 }

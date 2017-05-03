@@ -7,6 +7,7 @@ public class LaseryNowe {
 
     public static void main(String[] args) {
         LaserGame Gra = new LaserGame();
+        Gra.setTitle("LASERKI");
         Gra.setVisible(true);
         Gra.setDefaultCloseOperation(EXIT_ON_CLOSE);
         
