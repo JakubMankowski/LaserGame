@@ -50,6 +50,12 @@ final class LaserGame extends JFrame implements KeyListener,ActionListener
     static boolean down = false;
     static boolean left = false;
     static boolean right = false;
+    final static int startPointLaserX = 4;
+    final static int startPointLaserY = 5;
+    final static int startPointLaserPX = 4;
+    final static int startPointLaserPY = 6;
+    final static int startPointLaserPPX = 5;
+    final static int startPointLaserPPY = 6;
     static int currentLaserX;
     static int currentLaserY;
     static int previousLaserX;
@@ -66,9 +72,9 @@ final class LaserGame extends JFrame implements KeyListener,ActionListener
     JButton button1;
     JButton button2;
     JButton button3;
-    int laserTable[][];
     int mapTable[][];
     ArrayList<PointOfReflect> listOfReflect;
+    PointOfReflect previous = new PointOfReflect(0, 0, 0, 0);
     
     JMenuBar MenuBar;
     JMenu MenuPlik, MenuLevel, MenuOpcje, MenuPomoc;
@@ -76,14 +82,12 @@ final class LaserGame extends JFrame implements KeyListener,ActionListener
     
     LaserGame()
     {
-        
-        
-        laserTable = new int[m][n];
         mapTable = new int[m][n];
         mapa = new JLabel [m][n];
         panel = new JLines();
         
         listOfReflect = new ArrayList<PointOfReflect>();
+        
         
         for (int y = 0;y<n;y++){
             for (int x = 0;x<m;x++){
@@ -169,69 +173,23 @@ final class LaserGame extends JFrame implements KeyListener,ActionListener
         setSize(600,800);
         setResizable(true);
         addKeyListener(this);
-        //createLaserTable();
-        //printLaserTable();
     }
     class JLines extends JPanel{
         public JLines()
         {
         }
-        public void paintbottomright(Graphics g, int i, int j)
-        {
-            g.drawLine(mapa[0][0].getWidth()*i+mapa[0][0].getWidth()/2,mapa[0][0].getHeight()*j+mapa[0][0].getHeight(),mapa[0][0].getWidth()*i+mapa[0][0].getWidth(),mapa[0][0].getHeight()*j+ mapa[0][0].getHeight()/2);
-        }
-        public void paintbottomleft(Graphics g, int i, int j)
-        {
-            g.drawLine(mapa[0][0].getWidth()*i+0,mapa[0][0].getHeight()*j+mapa[0][0].getHeight()/2, mapa[0][0].getWidth()*i+mapa[0][0].getWidth()/2,mapa[0][0].getHeight()*j+ mapa[0][0].getHeight());
-        }
-        public void painttopright(Graphics g, int i, int j)
-        {
-            g.drawLine(mapa[0][0].getWidth()*i+mapa[0][0].getWidth()/2,mapa[0][0].getHeight()*j+0,mapa[0][0].getWidth()*i+ mapa[0][0].getWidth(), mapa[0][0].getHeight()*j+mapa[0][0].getHeight()/2);
-        }
-        public void painttopleft(Graphics g, int i, int j)
-        {
-            g.drawLine(mapa[0][0].getWidth()*i+0,mapa[0][0].getHeight()*j+mapa[0][0].getHeight()/2,mapa[0][0].getWidth()*i+ mapa[0][0].getWidth()/2,mapa[0][0].getHeight()*j+ 0);
-        }
         public void drawLine(Graphics g)
         {
-            if(paint){
-                for(int i=0;i<m;i++){
-                    for(int j=0;j<m;j++){
-                        int value = laserTable[i][j];
-                        while(value>0)
-                        {
-                            if(value/8==1)
-                            {
-                                painttopleft(g,i,j);
-                                value-=8;
-                            }
-                            else
-                            {
-                                if(value/4==1)
-                                {
-                                    painttopright(g,i,j);
-                                    value-=4;
-                                }
-                                else
-                                {
-                                    if(value/2==1)
-                                    {
-                                        paintbottomright(g, i ,j);
-                                        value-=2;
-                                    }
-                                    else
-                                    {
-                                        if(value == 1)
-                                        {
-                                            paintbottomleft(g,i,j);
-                                            value-=1;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+            previous = new PointOfReflect(startPointLaserX, startPointLaserY, startPointLaserPX, startPointLaserPY);
+            for(PointOfReflect p: listOfReflect)
+            {
+                g.drawLine((panel.getWidth()/m)*(previous.currentLaserX+previous.previousLaserX+1)/2, 
+                        (panel.getHeight()/n)*(previous.currentLaserY+previous.previousLaserY+1)/2, 
+                        (panel.getWidth()/m)*(p.currentLaserX+p.previousLaserX+1)/2, 
+                        (panel.getHeight()/n)*(p.currentLaserY+p.previousLaserY+1)/2);
+
+                previous = p;
+
             }
         }
         public void drawTank(Graphics g)
@@ -269,30 +227,8 @@ final class LaserGame extends JFrame implements KeyListener,ActionListener
             }
         }
     }
-    public void zerosLaserTable()
+    private void setLaser(int dcx, int dcy, int dpx, int dpy, int dppx, int dppy)
     {
-        for (int i = 0;i<m;i++)
-        {
-            for (int j = 0;j<n;j++)
-            {
-                laserTable[i][j] = 0;
-            }
-        }
-    }
-    public void printLaserTable()
-    {
-        for (int i = 0;i<m;i++)
-        {
-            for (int j = 0;j<n;j++)
-            {
-                System.out.print(laserTable[j][i]+"\t");
-            }
-            System.out.print("\n");
-        }
-    }
-    private void setLaser(int dcx, int dcy, int dpx, int dpy, int dppx, int dppy, int value)
-    {
-        laserTable[currentLaserX][currentLaserY]+=value;
         currentLaserX +=dcx;
         currentLaserY +=dcy;
         previousLaserX +=dpx;
@@ -302,12 +238,12 @@ final class LaserGame extends JFrame implements KeyListener,ActionListener
     }
     private void setLaserStartPoint()
     {
-        currentLaserX = 4;
-        currentLaserY = 5;
-        previousLaserX = 4;
-        previousLaserY = 6;
-        previouspreviousLaserX = 5;
-        previouspreviousLaserY = 6;
+        currentLaserX = startPointLaserX;
+        currentLaserY = startPointLaserY;
+        previousLaserX = startPointLaserPX;
+        previousLaserY = startPointLaserPY;
+        previouspreviousLaserX = startPointLaserPPX;
+        previouspreviousLaserY = startPointLaserPPY;
     }
     private void createOneLaserField() throws ArrayIndexOutOfBoundsException
     {
@@ -316,13 +252,12 @@ final class LaserGame extends JFrame implements KeyListener,ActionListener
             if(mapa[currentLaserX][currentLaserY+1].getBackground() == Color.GRAY || mapa[currentLaserX][currentLaserY+1].getBackground() == Color.WHITE)
             {
                 listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
-                setLaser(0,0,1,1,0,2,1);
-
+                setLaser(0,0,1,1,0,2);
             }
             else
             {
                 listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
-                setLaser(0,1,1,0,0,1,1);
+                setLaser(0,1,1,0,0,1);
             }
         }
         else if(currentLaserX > previousLaserX && currentLaserY == previousLaserY && previousLaserY < previouspreviousLaserY)
@@ -330,12 +265,12 @@ final class LaserGame extends JFrame implements KeyListener,ActionListener
             if(mapa[currentLaserX][currentLaserY-1].getBackground() == Color.GRAY || mapa[currentLaserX][currentLaserY-1].getBackground() == Color.WHITE)
             {
                 listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
-                setLaser(0,0,1,-1,0,-2,8);
+                setLaser(0,0,1,-1,0,-2);
             }
             else
             {
                 listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
-                setLaser(0,-1,1,0,0,-1,8);
+                setLaser(0,-1,1,0,0,-1);
             } 
         }
         else if(currentLaserX < previousLaserX && currentLaserY == previousLaserY && previousLaserY > previouspreviousLaserY)
@@ -343,12 +278,12 @@ final class LaserGame extends JFrame implements KeyListener,ActionListener
             if(mapa[currentLaserX][currentLaserY+1].getBackground() == Color.GRAY || mapa[currentLaserX][currentLaserY+1].getBackground() == Color.WHITE)
             {
                 listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
-                setLaser(0,0,-1,1,0,2,2);
+                setLaser(0,0,-1,1,0,2);
             }
             else
             {
                 listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
-                setLaser(0,1,-1,0,0,1,2);
+                setLaser(0,1,-1,0,0,1);
             } 
         }
         else if(currentLaserX < previousLaserX && currentLaserY == previousLaserY && previousLaserY < previouspreviousLaserY)
@@ -356,13 +291,13 @@ final class LaserGame extends JFrame implements KeyListener,ActionListener
             if(mapa[currentLaserX][currentLaserY-1].getBackground() == Color.GRAY || mapa[currentLaserX][currentLaserY-1].getBackground() == Color.WHITE)
             {
                 listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
-                setLaser(0,0,-1,-1,0,-2,4);
+                setLaser(0,0,-1,-1,0,-2);
 
             }
             else
             {
                 listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
-                setLaser(0,-1,-1,0,0,-1,4);
+                setLaser(0,-1,-1,0,0,-1);
             } 
         }
         else if(currentLaserX == previousLaserX && currentLaserY > previousLaserY && previousLaserX > previouspreviousLaserX)
@@ -370,13 +305,13 @@ final class LaserGame extends JFrame implements KeyListener,ActionListener
             if(mapa[currentLaserX+1][currentLaserY].getBackground() == Color.GRAY || mapa[currentLaserX+1][currentLaserY].getBackground() == Color.WHITE)
             {
                 listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
-                setLaser(0,0,1,1,2,0,4);
+                setLaser(0,0,1,1,2,0);
 
             }
             else
             {
                 listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
-                setLaser(1,0,0,1,1,0,4);
+                setLaser(1,0,0,1,1,0);
             }
         }
         else if(currentLaserX == previousLaserX && currentLaserY > previousLaserY && previousLaserX < previouspreviousLaserX)
@@ -384,13 +319,12 @@ final class LaserGame extends JFrame implements KeyListener,ActionListener
             if(mapa[currentLaserX-1][currentLaserY].getBackground() == Color.GRAY || mapa[currentLaserX-1][currentLaserY].getBackground() == Color.WHITE)
             {
                 listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
-                setLaser(0,0,-1,1,-2,0,8);
-
+                setLaser(0,0,-1,1,-2,0);
             }
             else
             {
                 listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
-                setLaser(-1,0,0,1,-1,0,8);
+                setLaser(-1,0,0,1,-1,0);
             } 
         }
         else if(currentLaserX == previousLaserX && currentLaserY < previousLaserY && previousLaserX > previouspreviousLaserX)
@@ -398,13 +332,13 @@ final class LaserGame extends JFrame implements KeyListener,ActionListener
             if(mapa[currentLaserX+1][currentLaserY].getBackground() == Color.GRAY || mapa[currentLaserX+1][currentLaserY].getBackground() == Color.WHITE)
             {
                 listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
-                setLaser(0,0,1,-1,2,0,2);
+                setLaser(0,0,1,-1,2,0);
 
             }
             else
             {
                 listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
-                setLaser(1,0,0,-1,1,0,2);
+                setLaser(1,0,0,-1,1,0);
             } 
         }
         else if(currentLaserX == previousLaserX && currentLaserY < previousLaserY && previousLaserX < previouspreviousLaserX)
@@ -413,19 +347,18 @@ final class LaserGame extends JFrame implements KeyListener,ActionListener
             {
                 // jest odbicie
                 listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
-                setLaser(0,0,-1,-1,-2,0,1);
+                setLaser(0,0,-1,-1,-2,0);
             }
             else
             {
                 // nie ma odbicia 
                 listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
-                setLaser(-1,0,0,-1,-1,0,1);            
+                setLaser(-1,0,0,-1,-1,0);            
             } 
         }
     }
     public void createLaserTable()
     {
-        zerosLaserTable();
         PointOfReflect currentPoint = new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY);
         if(!listOfReflect.isEmpty())listOfReflect.clear();
         if(mapa[currentLaserX][currentLaserY].getBackground()==Color.GRAY){}
@@ -438,9 +371,55 @@ final class LaserGame extends JFrame implements KeyListener,ActionListener
                 }
                 catch(ArrayIndexOutOfBoundsException e)
                 {
+                    listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
+                    if(currentLaserX > previousLaserX && currentLaserY == previousLaserY && previousLaserY > previouspreviousLaserY)
+                    { 
+                        setLaser(0,1,1,0,0,1);
+                        listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
+                    }
+                    else if(currentLaserX > previousLaserX && currentLaserY == previousLaserY && previousLaserY < previouspreviousLaserY)
+                    {
+                        setLaser(0,-1,1,0,0,-1);
+                        listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));  
+                    }
+                    else if(currentLaserX < previousLaserX && currentLaserY == previousLaserY && previousLaserY > previouspreviousLaserY)
+                    {
+                        setLaser(0,1,-1,0,0,1);
+                        listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
+                        
+                    }
+                    else if(currentLaserX < previousLaserX && currentLaserY == previousLaserY && previousLaserY < previouspreviousLaserY)
+                    {
+                        setLaser(0,-1,-1,0,0,-1);
+                        listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));       
+                    }
+                    else if(currentLaserX == previousLaserX && currentLaserY > previousLaserY && previousLaserX > previouspreviousLaserX)
+                    {  
+                        setLaser(1,0,0,1,1,0);
+                        listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
+                    }
+                    else if(currentLaserX == previousLaserX && currentLaserY > previousLaserY && previousLaserX < previouspreviousLaserX)
+                    {
+                        setLaser(-1,0,0,1,-1,0);
+                        listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
+                        
+                    }
+                    else if(currentLaserX == previousLaserX && currentLaserY < previousLaserY && previousLaserX > previouspreviousLaserX)
+                    {
+                        setLaser(1,0,0,-1,1,0);
+                        listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
+                            
+                    }
+                    else if(currentLaserX == previousLaserX && currentLaserY < previousLaserY && previousLaserX < previouspreviousLaserX)
+                    {
+                        setLaser(-1,0,0,-1,-1,0);  
+                        listOfReflect.add(new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY));
+                                  
+                    }
                     setLaserStartPoint();
                     break;
                 }
+                finally{
                 if(currentLaserX==winningPointX && currentLaserY == winningPointY)
                 {
                     if(!win)
@@ -455,6 +434,7 @@ final class LaserGame extends JFrame implements KeyListener,ActionListener
                         winningPointY = generator.nextInt(n-2)+1;
                     }while(Exist(listOfReflect,winningPointX, winningPointY));
                     mapa[winningPointX][winningPointY].setBackground(Color.RED);
+                }
 
                     //win = false;
                     //mapa[winningPointX][winningPointY].setBackground(Color.RED);
@@ -463,7 +443,6 @@ final class LaserGame extends JFrame implements KeyListener,ActionListener
 
 
             }while(!ifExist(listOfReflect, currentPoint));
-            //it =listOfReflect.listIterator();
         }
     }
     boolean ifExist(ArrayList<PointOfReflect> list, PointOfReflect current) {
@@ -600,7 +579,6 @@ final class LaserGame extends JFrame implements KeyListener,ActionListener
                 moves++;          
                 right();
                 createLaserTable();
-                printLaserTable();
             }
         }
         else if (e.getKeyCode() == KeyEvent.VK_LEFT){
@@ -608,8 +586,6 @@ final class LaserGame extends JFrame implements KeyListener,ActionListener
                 moves++;
                 left();
                 createLaserTable();
-                printLaserTable();
-
             }
         }
         else if (e.getKeyCode() == KeyEvent.VK_UP){
@@ -617,7 +593,6 @@ final class LaserGame extends JFrame implements KeyListener,ActionListener
                 moves++;
                 up();
                 createLaserTable();
-                printLaserTable();
             }
         }
         else if (e.getKeyCode() == KeyEvent.VK_DOWN){
@@ -625,7 +600,6 @@ final class LaserGame extends JFrame implements KeyListener,ActionListener
                 moves++;
                 down();
                 createLaserTable();
-                printLaserTable();
             }
         }	
     }
@@ -726,8 +700,8 @@ final class LaserGame extends JFrame implements KeyListener,ActionListener
             zerosLabel();
             mapa[currentX][currentY].setBackground(Color.black);
             setLaserStartPoint();
-            currentX=15;
-            currentY = 15;
+            currentX=1;
+            currentY = 5;
             mapa[previousLaserX][previousLaserY].setBackground(Color.green);
             mapa[2][1].setBackground(Color.white);
             mapa[5][1].setBackground(Color.white);
