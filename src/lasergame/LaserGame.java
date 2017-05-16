@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.Random;
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -38,6 +39,15 @@ final class LaserGame extends JFrame implements KeyListener,ActionListener
         public void printPointOfReflect()
         {
             System.out.println(currentLaserX+","+ currentLaserY+"; "+previousLaserX+","+previousLaserY);
+        }
+    }
+    public class WinningPoints
+    {
+        public int winX, winY;
+        public WinningPoints(int x, int y)
+        {
+            winX = x;
+            winY = y;
         }
     }
     
@@ -74,11 +84,13 @@ final class LaserGame extends JFrame implements KeyListener,ActionListener
     JButton button3;
     int mapTable[][];
     ArrayList<PointOfReflect> listOfReflect;
+    
+    ArrayList<WinningPoints> listWinningPoints;
     PointOfReflect previous = new PointOfReflect(0, 0, 0, 0);
     
     JMenuBar MenuBar;
     JMenu MenuPlik, MenuLevel, MenuOpcje, MenuPomoc;
-    JMenuItem mOtworz, mZapisz, mWyjscie, mLevel1, mLevel2,  mLevel3, mOProgramie;
+    JMenuItem /*mOtworz, mZapisz,*/ mWyjscie, mLevel1, mLevel2,  mLevel3, mOProgramie;
     
     LaserGame()
     {
@@ -87,6 +99,7 @@ final class LaserGame extends JFrame implements KeyListener,ActionListener
         panel = new JLines();
         
         listOfReflect = new ArrayList<PointOfReflect>();
+        listWinningPoints = new ArrayList<WinningPoints>();
         
         
         for (int y = 0;y<n;y++){
@@ -129,12 +142,12 @@ final class LaserGame extends JFrame implements KeyListener,ActionListener
         MenuBar = new JMenuBar();
         MenuPlik = new JMenu("Plik");
 
-        mOtworz = new JMenuItem("Otwórz");
-        mZapisz = new JMenuItem("Zapisz");
+        //mOtworz = new JMenuItem("Otwórz");
+        //mZapisz = new JMenuItem("Zapisz");
         mWyjscie = new JMenuItem("Wyjście");
 
-        MenuPlik.add(mOtworz);
-        MenuPlik.add(mZapisz);
+        //MenuPlik.add(mOtworz);
+        //MenuPlik.add(mZapisz);
         MenuPlik.addSeparator();
         MenuPlik.add(mWyjscie);
         mWyjscie.addActionListener(this);
@@ -143,12 +156,15 @@ final class LaserGame extends JFrame implements KeyListener,ActionListener
 
         mLevel1 = new JMenuItem("Level1");
         mLevel2 = new JMenuItem("Level2");
+        mLevel3 = new JMenuItem("Level3");
         
         mLevel1.addActionListener(this);
         mLevel2.addActionListener(this);
+        mLevel3.addActionListener(this);
 
         MenuLevel.add(mLevel1);
         MenuLevel.add(mLevel2);
+        MenuLevel.add(mLevel3);
 
 
         MenuBar.add(Box.createHorizontalStrut(20));
@@ -420,24 +436,27 @@ final class LaserGame extends JFrame implements KeyListener,ActionListener
                     break;
                 }
                 finally{
-                if(currentLaserX==winningPointX && currentLaserY == winningPointY)
-                {
-                    if(!win)
-                    {
-                        win();
-                        win = true;
+                    try{
+                    for(WinningPoints w: listWinningPoints)
+                        if(currentLaserX==w.winX && currentLaserY == w.winY)
+                        {
+                            mapa[w.winX][w.winY].setBackground(Color.BLACK);
+                            listWinningPoints.remove(w);
+                            if(listWinningPoints.isEmpty())
+                            {
+                                if(!win)
+                                {
+                                    win();
+                                    win = true;
+                                }
+                                
+                            }
+                        }
                     }
-                    mapa[winningPointX][winningPointY].setBackground(Color.BLACK);
-                    Random generator = new Random();
-                    do{
-                        winningPointX = generator.nextInt(m-2)+1;
-                        winningPointY = generator.nextInt(n-2)+1;
-                    }while(Exist(listOfReflect,winningPointX, winningPointY));
-                    mapa[winningPointX][winningPointY].setBackground(Color.RED);
-                }
-
-                    //win = false;
-                    //mapa[winningPointX][winningPointY].setBackground(Color.RED);
+                    catch(ConcurrentModificationException e)
+                    {
+                        
+                    }
                 }
                 currentPoint= new PointOfReflect(currentLaserX, currentLaserY, previousLaserX, previousLaserY);
 
@@ -687,8 +706,11 @@ final class LaserGame extends JFrame implements KeyListener,ActionListener
             mapa[7][7].setBackground(Color.gray);
             mapa[7][10].setBackground(Color.gray);
             mapa[11][7].setBackground(Color.gray);
-            
-            mapa[winningPointX][winningPointY].setBackground(Color.red);
+            listWinningPoints.clear();
+            listWinningPoints.add(new WinningPoints(13,13));
+            listWinningPoints.add(new WinningPoints(14,15));
+            for(WinningPoints w: listWinningPoints)
+            mapa[w.winX][w.winY].setBackground(Color.red);
         
             mapa[currentX][currentY].setBackground(Color.YELLOW);
             
@@ -710,7 +732,6 @@ final class LaserGame extends JFrame implements KeyListener,ActionListener
             mapa[4][2].setBackground(Color.white);
             mapa[9][2].setBackground(Color.white);
             mapa[12][2].setBackground(Color.white);
-            mapa[3][3].setBackground(Color.white);
             mapa[5][3].setBackground(Color.white);
             mapa[9][3].setBackground(Color.white);
             mapa[13][3].setBackground(Color.white);
@@ -750,12 +771,40 @@ final class LaserGame extends JFrame implements KeyListener,ActionListener
             mapa[7][10].setBackground(Color.gray);
             mapa[11][7].setBackground(Color.gray);
             
-            mapa[winningPointX][winningPointY].setBackground(Color.red);
+            listWinningPoints.clear();
+            listWinningPoints.add(new WinningPoints(10,13));
+            listWinningPoints.add(new WinningPoints(14,15));
+            listWinningPoints.add(new WinningPoints(13,8));
+            for(WinningPoints w: listWinningPoints)
+            mapa[w.winX][w.winY].setBackground(Color.red);
         
             mapa[currentX][currentY].setBackground(Color.YELLOW);
             
             createLaserTable();
 
+        }
+        else if(zrodlo == mLevel3)
+        {
+            zerosLabel();
+            mapa[currentX][currentY].setBackground(Color.black);
+            setLaserStartPoint();
+            currentX=6;
+            currentY = 3;
+            mapa[previousLaserX][previousLaserY].setBackground(Color.green);
+            
+            for(int i=0;i<7;i++)
+                for(int j=0;j<12;j++)
+                    mapa[2*i+1][j+2].setBackground(Color.gray);
+            listWinningPoints.clear();
+            for(int i=0;i<14;i++)
+                listWinningPoints.add(new WinningPoints(i+1,15));
+            for(WinningPoints w: listWinningPoints)
+            mapa[w.winX][w.winY].setBackground(Color.red);
+            mapa[currentX][currentY].setBackground(Color.YELLOW);
+            
+            createLaserTable();
+                
+            
         }
     }
 }
